@@ -36,4 +36,4 @@ Feel free to modify the code to suit your specific needs. You can add additional
 
 ## Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/uefn-random-collectibles-spawner/issues) if you want to contribute.
+Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/iamKuff/UEFN-Random-Collectibles-Spawner/issues) if you want to contribute.
