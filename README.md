@@ -2,6 +2,9 @@
 
 A powerful and flexible Verse device for Fortnite Creative that allows you to spawn collectible items at random positions on a customizable plane. This tool is perfect for creating engaging gameplay mechanics such as treasure hunts, resource gathering, or simply populating your island with dynamically placed objects.
 
+## CREDITS
+- [Get Some Random Positons On A Plane](https://dev.epicgames.com/community/snippets/RwMR/fortnite-get-some-random-positons-on-a-plane) BY [CHENSHUO.L](https://dev.epicgames.com/community/profile/qBoAL/CHENSHUO.L)
+
 ## Features
 
 - Spawn any prop or device at random positions
