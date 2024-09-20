@@ -1,0 +1,99 @@
+using { /Fortnite.com/Devices }
+using { /Fortnite.com/Characters }
+using { /Verse.org/Simulation }
+using { /UnrealEngine.com/Temporary/Diagnostics }
+using { /UnrealEngine.com/Temporary/SpatialMath }
+
+# A device for spawning collectible items randomly on a plane
+random_collectibles_spawner_device := class(creative_device):
+
+    @editable
+    var ItemToSpawn : creative_prop = creative_prop{}
+
+    @editable
+    var NumberOfItemsToSpawn : int = 10
+
+    @editable
+    var PlaneStartPosition : vector3 = vector3{X := 0.0, Y := 0.0, Z := 0.0}
+
+    @editable
+    var PlaneEndPosition : vector3 = vector3{X := 1000.0, Y := 1000.0, Z := 0.0}
+
+    @editable
+    var ItemSize : vector3 = vector3{X := 100.0, Y := 100.0, Z := 100.0}
+
+    @editable
+    var IsVerticalPlane : logic = false
+
+    var SpawnedItems : []creative_prop = array{}
+
+    # This function is called when the device is started in a running game
+    OnBegin<override>()<suspends>:void=
+        SpawnCollectibles()
+
+    # Spawn collectibles at random positions
+    SpawnCollectibles()<suspends>:void=
+        var Positions : []vector3 = GetRandomPositions()
+        for (Position : Positions):
+            if (NewItem := SpawnProp(ItemToSpawn, Position, IdentityRotation())):
+                set SpawnedItems += array{NewItem}
+
+    # Get random positions based on the plane orientation
+    GetRandomPositions():[]vector3=
+        if (IsVerticalPlane?):
+            return GetRandomPosInPlaneVertical(PlaneStartPosition, PlaneEndPosition, ItemSize, NumberOfItemsToSpawn)
+        else:
+            return GetRandomPosInPlaneHorizontal(PlaneStartPosition, PlaneEndPosition, ItemSize, NumberOfItemsToSpawn)
+
+    # Generate random positions on a vertical plane
+    GetRandomPosInPlaneVertical(StartPos:vector3, EndPos:vector3, Size:vector3, Num:int):[]vector3=
+        SizePos := EndPos - StartPos
+        MaxY := Floor(SizePos.Y / Size.Y)
+        MaxZ := Floor(SizePos.Z / Size.Z)
+        MaxNum := MaxY * MaxZ
+
+        if (Num > MaxNum):
+            set Num = MaxNum
+
+        AllPositions := CreateSequence(0, MaxNum - 1)
+        var RandomPositions : []int = array{}
+
+        for (I := 0..Num - 1):
+            if (RandIndex := GetRandomInt(0, AllPositions.Length - 1)):
+                if (Position := AllPositions[RandIndex]):
+                    set RandomPositions += array{Position}
+                    set AllPositions = AllPositions.RemoveElement(RandIndex)
+
+        return for (Idx : RandomPositions):
+            Y := StartPos.Y + (Floor(Idx / MaxZ) as float + 0.5) * Size.Y
+            Z := StartPos.Z + (Mod(Idx, MaxZ) as float + 0.5) * Size.Z
+            vector3{X := StartPos.X, Y := Y, Z := Z}
+
+    # Generate random positions on a horizontal plane
+    GetRandomPosInPlaneHorizontal(StartPos:vector3, EndPos:vector3, Size:vector3, Num:int):[]vector3=
+        SizePos := EndPos - StartPos
+        MaxX := Floor(SizePos.X / Size.X)
+        MaxY := Floor(SizePos.Y / Size.Y)
+        MaxNum := MaxX * MaxY
+
+        if (Num > MaxNum):
+            set Num = MaxNum
+
+        AllPositions := CreateSequence(0, MaxNum - 1)
+        var RandomPositions : []int = array{}
+
+        for (I := 0..Num - 1):
+            if (RandIndex := GetRandomInt(0, AllPositions.Length - 1)):
+                if (Position := AllPositions[RandIndex]):
+                    set RandomPositions += array{Position}
+                    set AllPositions = AllPositions.RemoveElement(RandIndex)
+
+        return for (Idx : RandomPositions):
+            X := StartPos.X + (Floor(Idx / MaxY) as float + 0.5) * Size.X
+            Y := StartPos.Y + (Mod(Idx, MaxY) as float + 0.5) * Size.Y
+            vector3{X := X, Y := Y, Z := StartPos.Z}
+
+    # Create a sequence of integers from Start to End
+    CreateSequence(Start:int, End:int):[]int=
+        for (I := Start..End):
+            I
